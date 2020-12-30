@@ -161,6 +161,7 @@ public class RemotingUtil {
     }
 
     public static SocketChannel connect(SocketAddress remote) {
+        // 连接Master, 设置超时时间为5S
         return connect(remote, 1000 * 5);
     }
 
@@ -169,11 +170,18 @@ public class RemotingUtil {
         try {
             sc = SocketChannel.open();
             sc.configureBlocking(true);
+            // 设置了关闭Socket的延迟事件，那么当线程执行Socket的Close方法时, 会进入阻塞状态, 直到底层的Socket发送完所有剩余的数据,
+            // 或者超过了设置的延迟时间, 才会从close()方法中返回
             sc.socket().setSoLinger(false, -1);
+            // 禁止使用Nagle算法(合并小数据，然后再传输; 算法原理：通过讲缓冲区的小封包自动相连，组成较大的封包); 保证数据能够及时传输
             sc.socket().setTcpNoDelay(true);
+            // 接收的缓冲区
             sc.socket().setReceiveBufferSize(1024 * 64);
+            // 发送的缓冲区
             sc.socket().setSendBufferSize(1024 * 64);
+            // 进行Socket连接
             sc.socket().connect(remote, timeoutMillis);
+            // 最终设置为非阻塞IO
             sc.configureBlocking(false);
             return sc;
         } catch (Exception e) {
