@@ -22,12 +22,27 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 分区有序消息：一个Topic下可能存在多个Message Queue, 那么对于每个queue来说, 可以保证FIFO;
+ * 全局性有序消息：只能设置Topic下只存在一个Message Queue; 那么就保证了全局消息的FIFO;
+ *
+ * 事务消息：即保证多个操作的同事成功或者失败, 消费者才能消费消息; MQ通过发送Half消息, 来处理本地事务、
+ * 消息提交、回滚，从而实现事务消息.
+ */
 public class Message implements Serializable {
     private static final long serialVersionUID = 8445773977080406428L;
 
     private String topic;
+
     private int flag;
+    /**
+     * tag keys 延迟级别都保存在里面
+     */
     private Map<String, String> properties;
+    /**
+     * 消息体：字节数组;
+     * producer和consumer使用的编码必须一致
+     */
     private byte[] body;
     private String transactionId;
 
@@ -118,6 +133,9 @@ public class Message implements Serializable {
         return this.getProperty(MessageConst.PROPERTY_TAGS);
     }
 
+    /**
+     * broker只会把consumer订阅了的tag消息，发送给consumer; 在broker中处理
+     */
     public void setTags(String tags) {
         this.putProperty(MessageConst.PROPERTY_TAGS, tags);
     }
@@ -145,6 +163,9 @@ public class Message implements Serializable {
         return 0;
     }
 
+    /**
+     * 设置延迟级别; 无法自定义设置延迟时间
+     */
     public void setDelayTimeLevel(int level) {
         this.putProperty(MessageConst.PROPERTY_DELAY_TIME_LEVEL, String.valueOf(level));
     }
