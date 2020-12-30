@@ -1132,6 +1132,7 @@ public class BrokerController {
     }
 
     private void handleSlaveSynchronize(BrokerRole role) {
+        //判断当前broker的角色是Slave
         if (role == BrokerRole.SLAVE) {
             if (null != slaveSyncFuture) {
                 slaveSyncFuture.cancel(false);
@@ -1141,6 +1142,7 @@ public class BrokerController {
                 @Override
                 public void run() {
                     try {
+                        //启动定时任务同步元数据信息
                         BrokerController.this.slaveSynchronize.syncAll();
                     }
                     catch (Throwable e) {

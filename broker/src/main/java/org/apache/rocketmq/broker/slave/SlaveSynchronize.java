@@ -46,9 +46,15 @@ public class SlaveSynchronize {
     }
 
     public void syncAll() {
+        // Slave同步元数据信息, 底层使用了Netty进行数据的同步;
+        // Slave同步commitLog信息, 使用了原生的NIO socket进行数据同步.
+        //同步Topic配置信息
         this.syncTopicConfig();
+        //同步消费者偏移量
         this.syncConsumerOffset();
+        //同步延迟偏移量
         this.syncDelayOffset();
+        //同步订阅组配置信息
         this.syncSubscriptionGroupConfig();
     }
 
