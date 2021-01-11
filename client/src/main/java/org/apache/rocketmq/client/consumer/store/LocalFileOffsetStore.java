@@ -37,6 +37,10 @@ import org.apache.rocketmq.remoting.exception.RemotingException;
 
 /**
  * Local storage implementation
+ * 广播模式；
+ * 各个Consumer都可以读取到所有的消息并且消费;
+ * 各个consumer之间没有任何干扰, 独立线程消费
+ * 所以使用LocalFileOffsetStore，存储到本地。
  */
 public class LocalFileOffsetStore implements OffsetStore {
     public final static String LOCAL_OFFSET_STORE_DIR = System.getProperty(
