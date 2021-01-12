@@ -65,9 +65,13 @@ import org.apache.rocketmq.remoting.protocol.RemotingCommand;
 
 public class NettyRemotingServer extends NettyRemotingAbstract implements RemotingServer {
     private static final InternalLogger log = InternalLoggerFactory.getLogger(RemotingHelper.ROCKETMQ_REMOTING);
+    // NettyServer辅助类
     private final ServerBootstrap serverBootstrap;
+    // Selector 组(用于注册并监听Event)
     private final EventLoopGroup eventLoopGroupSelector;
+    // 主线程组(用于接收TCP连接)
     private final EventLoopGroup eventLoopGroupBoss;
+    // NettyServer统一配置
     private final NettyServerConfig nettyServerConfig;
 
     private final ExecutorService publicExecutor;
