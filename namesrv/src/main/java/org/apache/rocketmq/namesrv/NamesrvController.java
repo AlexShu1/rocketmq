@@ -84,6 +84,7 @@ public class NamesrvController {
 
         this.registerProcessor();
 
+        // 每隔10S获取一次Broker的路由信息, 移除处于不激活状态的Broker
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -92,6 +93,7 @@ public class NamesrvController {
             }
         }, 5, 10, TimeUnit.SECONDS);
 
+        // 每隔10分钟打印一次NameServer的配置文件
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override

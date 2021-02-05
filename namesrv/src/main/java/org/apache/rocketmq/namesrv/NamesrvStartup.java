@@ -54,7 +54,9 @@ public class NamesrvStartup {
     public static NamesrvController main0(String[] args) {
 
         try {
+            // 装配NameServer需要的参数
             NamesrvController controller = createNamesrvController(args);
+            // 启动NameServer
             start(controller);
             String tip = "The Name Server boot success. serializeType=" + RemotingCommand.getSerializeTypeConfigInThisServer();
             log.info(tip);
@@ -81,10 +83,13 @@ public class NamesrvStartup {
 
         final NamesrvConfig namesrvConfig = new NamesrvConfig();
         final NettyServerConfig nettyServerConfig = new NettyServerConfig();
+        // NameServer的监听端口
         nettyServerConfig.setListenPort(9876);
+        // 是否使用了配置文件
         if (commandLine.hasOption('c')) {
             String file = commandLine.getOptionValue('c');
             if (file != null) {
+                // 解析-c参数的配置文件
                 InputStream in = new BufferedInputStream(new FileInputStream(file));
                 properties = new Properties();
                 properties.load(in);
@@ -98,6 +103,7 @@ public class NamesrvStartup {
             }
         }
 
+        // 打印配置参数出来, 可以知道配置文件参数是否配置错误
         if (commandLine.hasOption('p')) {
             InternalLogger console = InternalLoggerFactory.getLogger(LoggerName.NAMESRV_CONSOLE_NAME);
             MixAll.printObjectProperties(console, namesrvConfig);
@@ -143,9 +149,13 @@ public class NamesrvStartup {
             System.exit(-3);
         }
 
+        // 设置当JVM关闭的时候, 触发的Hook，当系统执行完这些钩子后，jvm才会关闭
+        // 只有JVM自动退出的时候，才会执行; 若手动杀死进程, 则不会去执行Hook.
         Runtime.getRuntime().addShutdownHook(new ShutdownHookThread(log, new Callable<Void>() {
             @Override
             public Void call() throws Exception {
+                // 关闭NameServer
+                // 关闭相关开启的线程池
                 controller.shutdown();
                 return null;
             }
