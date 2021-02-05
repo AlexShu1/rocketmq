@@ -48,11 +48,32 @@ import org.apache.rocketmq.remoting.common.RemotingUtil;
 public class RouteInfoManager {
     private static final InternalLogger log = InternalLoggerFactory.getLogger(LoggerName.NAMESRV_LOGGER_NAME);
     private final static long BROKER_CHANNEL_EXPIRED_TIME = 1000 * 60 * 2;
+
+    /**
+     * 读写锁
+     */
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    /**
+     * Topic消息队列路由信息, 消息发送时根据路由表进行负载均衡
+     */
     private final HashMap<String/* topic */, List<QueueData>> topicQueueTable;
+
+    /**
+     * Broker基础信息, 包含BrokerName、所属集群名称、主备Broker地址
+     */
     private final HashMap<String/* brokerName */, BrokerData> brokerAddrTable;
+
+    /**
+     * Broker集群信息，存储集群中所有的broker名称
+     */
     private final HashMap<String/* clusterName */, Set<String/* brokerName */>> clusterAddrTable;
+    /**
+     * Broker状态信息。NameServer每次收到心跳包时会替换该信息
+     */
     private final HashMap<String/* brokerAddr */, BrokerLiveInfo> brokerLiveTable;
+    /**
+     * Broker上的FilterServer列表，用于类模式消息过滤
+     */
     private final HashMap<String/* brokerAddr */, List<String>/* Filter Server */> filterServerTable;
 
     public RouteInfoManager() {
@@ -753,6 +774,9 @@ public class RouteInfoManager {
 }
 
 class BrokerLiveInfo {
+    /**
+     * 最后一次更新的心跳时间
+     */
     private long lastUpdateTimestamp;
     private DataVersion dataVersion;
     private Channel channel;

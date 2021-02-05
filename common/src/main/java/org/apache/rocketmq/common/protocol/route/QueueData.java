@@ -20,11 +20,32 @@
  */
 package org.apache.rocketmq.common.protocol.route;
 
+/**
+ * 默认情况下, Broker会为每个Topic创建4个读队列和4个写队列
+ */
 public class QueueData implements Comparable<QueueData> {
+    /**
+     * 所属与哪个broker
+     */
     private String brokerName;
+    /**
+     * 读队列
+     */
     private int readQueueNums;
+    /**
+     * 写队列
+     */
     private int writeQueueNums;
+    /**
+     * 读写权限
+     *     6：同时支持读写
+     *     4：禁写
+     *     2：禁读
+     */
     private int perm;
+    /**
+     * Topic同步标记
+     */
     private int topicSynFlag;
 
     public int getReadQueueNums() {
