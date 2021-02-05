@@ -132,8 +132,10 @@ public class RouteInfoManager {
         RegisterBrokerResult result = new RegisterBrokerResult();
         try {
             try {
+                // 防止并发修改路由表
                 this.lock.writeLock().lockInterruptibly();
 
+                // 判断broker所属集群是否存在, 若不存在, 则进行创建, 然后将broker名称加入到集群broker集合中
                 Set<String> brokerNames = this.clusterAddrTable.get(clusterName);
                 if (null == brokerNames) {
                     brokerNames = new HashSet<String>();
