@@ -337,6 +337,7 @@ public class MappedFileQueue {
         final int deleteFilesInterval,
         final long intervalForcibly,
         final boolean cleanImmediately) {
+        //全部的CommitLog文件
         Object[] mfs = this.copyMappedFiles(0);
 
         if (null == mfs)

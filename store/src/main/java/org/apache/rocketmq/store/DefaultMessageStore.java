@@ -1611,6 +1611,10 @@ public class DefaultMessageStore implements MessageStore {
 
         public void run() {
             try {
+                // 先决条件
+                // 1. 当前时间等于已经配置的删除时间
+                // 2. 磁盘使用空间超过85%
+                // 3. 手动指定删除(开源版本RocketMQ 4.2.0不支持)
                 this.deleteExpiredFiles();
 
                 this.redeleteHangedFile();
